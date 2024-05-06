@@ -50,7 +50,7 @@ def complex_target_map_master(complex_target, target_type):
 
 
 if __name__ == '__main__':
-    complex_target = '192.168.64.34'
-    target_type = 'ipcidr'
-    minions = ping_minions(complex_target, target_type)
+    complex_target = "os:Ubuntu"
+    target_type = 'grain'
+    minions = complex_target_map_master(complex_target, target_type)
     print(minions)

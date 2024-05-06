@@ -1,37 +1,59 @@
-import requests 
-from map_master import get_target_master
+import requests
 
-def run_command_on_minion(minion_id, command):
+def execute_command(command, minion_details):
+    results = {}
 
-    target_master = get_target_master(minion_id)
-    master_name = next(iter(target_master))
-    url = target_master[master_name]['url']
-    auth_token = target_master[master_name]['auth_token']
+    for minion, master_info in minion_details.items():
 
-    if target_master == {'master': 'not found'}:
-        print(f"No master details found for minion {minion_id}")
-        return None
+        for master, master_details in master_info.items():
+        
+            if master_info[master] != 'not found':
+                url = master_details['url']
+                auth_token = master_details['auth_token']
+            
 
-    headers = {
-        'Accept': 'application/json',
-        'X-Auth-Token': auth_token
-    }
-    data = {
-        'client': 'local',
-        'tgt': minion_id,
-        'fun': 'cmd.run',
-        'arg': command
-    }
+                headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Auth-Token': auth_token
+                }
 
-    response = requests.post(url, headers=headers, json=data)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Failed to execute command:", response.status_code, response.text)
-        return None
+
+
+                data = {
+                    "client": "local",
+                    "tgt": minion,
+                    "fun": command.split()[0],
+                }
+
+                #if command has an argument only then its passed with 'arg' key
+                if len(command.split()) > 1:
+                    data['arg'] = command.split()[1]
+
+                #if minion was passed by ip and target dictionary contains key as ip 
+                if '.' in minion:
+                    data['tgt_type'] = 'ipcidr'
+        
+
+                
+
+                response = requests.post(url, headers=headers, json=data, verify=False)
+                
+                if response.status_code == 200:
+                    result_data = response.json()
+                    results[minion] = {'master': master, 'result': result_data['return']}
+                else:
+                    results[minion] = {'master': master, 'error': f"HTTP Error {response.status_code}"}
+            else: 
+                results[minion] = {'master': 'not found', 'result': 'none'}
+    return results
+
+
+
 
 
 
 if __name__ == '__main__':
-    command_output = run_command_on_minion('myminion','test.ping')
-    print(command_output)
+    minion_details = {'192.168.64.33': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3f6611fb8c2777381a64f20ecd2647245a87c5c9'}}, 'myminion1': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3f6611fb8c2777381a64f20ecd2647245a87c5c9'}}}
+    command = 'test.ping'
+    print(execute_command (command, minion_details))
