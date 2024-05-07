@@ -1,5 +1,9 @@
 import requests
+
 from minionlist_map_master import map_masters_for_minionlist
+#Testing use to get fresh auth tokens
+#not used unless calling script from terminal, miniondetails gets passed as a param from cli app where this is called already 
+ 
 
 def execute_command(command, minion_details):
     results = {}

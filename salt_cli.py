@@ -2,6 +2,9 @@
 
 import argparse 
 # A module that lets us write CLI apps
+from tabulate import tabulate
+# A module to display data as a table on the CLI
+
 
 from map_master import get_target_master
 from minionlist_map_master import map_masters_for_minionlist
@@ -55,28 +58,35 @@ def run(args) :
 
     if args.target_type == 'minion_id':
         target_dict = get_target_master(args.target)
-        print(execute_command(args.command, target_dict))
+        data = execute_command(args.command, target_dict)
 
     elif args.target_type == 'minion_list':
         minion_list = args.target.split(', ')
         target_dict = map_masters_for_minionlist(minion_list)
-        print(execute_command(args.command, target_dict))
+        data = execute_command(args.command, target_dict)
 
 
     elif args.target_type == 'grain':
         target_dict = complex_target_map_master(args.target, 'grain')
-        print(execute_command(args.command, target_dict))
+        data = execute_command(args.command, target_dict)
 
     elif args.target_type == 'regex':
         target_dict = complex_target_map_master(args.target, 'glob')
-        print(execute_command(args.command, target_dict))
+        data = execute_command(args.command, target_dict)
         
     
     elif args.target_type == 'ip':
         target_dict = complex_target_map_master(args.target, 'ipcidr')
-        print(execute_command(args.command, target_dict))
+        data = execute_command(args.command, target_dict)
 
+    table_data = []
+    for minion, details in data.items():
+        master = details['master']
+        result_payload = details['result']
+        table_data.append((minion, master, result_payload))
     
+    table = tabulate(table_data, headers=['Minion', 'Master', 'Result Payload'], tablefmt='pipe')
+    print(table)
 
 #Defining entrypoint of CLI app
 # this ensures that script is run only from the CLI not when it's imported into another script
