@@ -52,8 +52,7 @@ def execute_command(command, minion_details):
 
 
 
-
 if __name__ == '__main__':
-    minion_details = {'192.168.64.33': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3f6611fb8c2777381a64f20ecd2647245a87c5c9'}}, 'myminion1': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3f6611fb8c2777381a64f20ecd2647245a87c5c9'}}}
+    minion_details = {'192.168.64.32': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3a4c46e64a47d3d2f9d9cda15273d552848ad99a'}}, 'myminion1': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3a4c46e64a47d3d2f9d9cda15273d552848ad99a'}}}
     command = 'test.ping'
     print(execute_command (command, minion_details))
