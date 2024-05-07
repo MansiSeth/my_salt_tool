@@ -25,7 +25,6 @@ def fetch_auth_tokens():
             
             auth_tokens[master] = auth_token
         except requests.exceptions.RequestException as e:
-            print(f"Failed to get auth token for {master}")
             auth_tokens[master] = 'Failed to get auth token'
 
     return auth_tokens

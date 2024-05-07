@@ -23,7 +23,7 @@ def main():
                         required= True,
                         default = 'minion_id', 
                         dest ='target_type', #name of variable you want to call using args.__ 
-                        choices = ['minion_id','minionid_list', 'minionip_list', 'grain', 'regex', 'ip']
+                        choices = ['minion_id','minion_list', 'minionip_list', 'grain', 'regex', 'ip']
     )
 
     parser.add_argument("--tgt", 
@@ -57,8 +57,9 @@ def run(args) :
         target_dict = get_target_master(args.target)
         print(execute_command(args.command, target_dict))
 
-    elif args.target_type == 'minionid_list':
-        target_dict = map_masters_for_minionlist(args.target)
+    elif args.target_type == 'minion_list':
+        minion_list = args.target.split(', ')
+        target_dict = map_masters_for_minionlist(minion_list)
         print(execute_command(args.command, target_dict))
 
 

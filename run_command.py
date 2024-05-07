@@ -1,4 +1,5 @@
 import requests
+from minionlist_map_master import map_masters_for_minionlist
 
 def execute_command(command, minion_details):
     results = {}
@@ -53,6 +54,6 @@ def execute_command(command, minion_details):
 
 
 if __name__ == '__main__':
-    minion_details = {'192.168.64.32': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3a4c46e64a47d3d2f9d9cda15273d552848ad99a'}}, 'myminion1': {'master1': {'url': 'https://192.168.64.30:8000', 'auth_token': '3a4c46e64a47d3d2f9d9cda15273d552848ad99a'}}}
+    minion_details = map_masters_for_minionlist(['192.168.64.32','myminion1'])
     command = 'test.ping'
     print(execute_command (command, minion_details))

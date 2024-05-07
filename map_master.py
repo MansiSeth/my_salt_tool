@@ -58,7 +58,7 @@ def get_target_master(minion):
         
 
 if __name__ == '__main__':
-    target_master = get_target_master('my')
+    target_master = get_target_master('myminion1', 'myminion2')
     print(target_master)
 
 
