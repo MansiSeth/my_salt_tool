@@ -58,7 +58,7 @@ def run(args) :
 
     if args.target_type == 'minion_id':
         target_dict = get_target_master(args.target)
-        data = execute_command(args.command, target_dict)
+        data = execute_command(args.command, target_dict) 
 
     elif args.target_type == 'minion_list':
         minion_list = args.target.split(', ')
@@ -79,13 +79,29 @@ def run(args) :
         target_dict = complex_target_map_master(args.target, 'ipcidr')
         data = execute_command(args.command, target_dict)
 
+
+
+    #Using tabulate to format the result dictionary 'data'
+    """ 
+    data = {
+        '192.168.64.32': {
+            'master': 'master1',
+            'result': [{'myminion': True}]
+        },
+        'myminion1': {
+            'master': 'master1',
+            'result': [{'myminion1': True}]
+        }
+    }
+    """
+    
     table_data = []
     for minion, details in data.items():
         master = details['master']
         result_payload = details['result']
         table_data.append((minion, master, result_payload))
     
-    table = tabulate(table_data, headers=['Minion', 'Master', 'Result Payload'], tablefmt='pipe')
+    table = tabulate(table_data, headers=['Minion', 'Master', 'Result Payload'], tablefmt='fancy_grid')
     print(table)
 
 #Defining entrypoint of CLI app

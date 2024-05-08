@@ -16,8 +16,9 @@ def get_target_master(minion):
 
     for master, url in master_urls.items():
         auth_token = auth_tokens[master]
+        cert_path = f'/etc/pki/tls/certs/{master}.crt'
         
-        if auth_token != 'Failed to get auth token':
+        if auth_token not in ('Failed to get auth token', 'Certificate not found'):
             # Define the headers and data payload for the request
             headers = {
                 'Accept': 'application/json',
@@ -32,11 +33,13 @@ def get_target_master(minion):
             }
             
             # Perform the POST request
-            response = requests.post(url, headers=headers, data=data, verify=False)
+            response = requests.post(url, headers=headers, data=data, verify=cert_path)
+            
             
             
             if response.ok: #status code in 200s
                 response_json = response.json()
+                
 
                 """
                 We need to dynamically check if value for 1st key is true 
@@ -51,14 +54,14 @@ def get_target_master(minion):
                     target_master =  {next(iter(first_return_item)):{master: {'url': url, 'auth_token': auth_token}}}
                     break
 
-    if target_master == {}:
-        target_master = {minion: {'master': 'not found'}}
+            if target_master == {}:
+                target_master = {minion: {'master': 'not found'}}
 
     return target_master 
         
 
 if __name__ == '__main__':
-    target_master = get_target_master('myminion1', 'myminion2')
+    target_master = get_target_master('192.168.64.32')
     print(target_master)
 
 

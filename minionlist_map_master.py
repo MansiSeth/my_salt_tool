@@ -16,6 +16,6 @@ def map_masters_for_minionlist(minionlist):
     return minionlist_master_map
 
 if __name__ == '__main__':
-    minionlist = ['myminion1','myminion2']
+    minionlist = ['myminion1','192.168.64.32']
     master_mapping = map_masters_for_minionlist(minionlist)
     print(master_mapping)

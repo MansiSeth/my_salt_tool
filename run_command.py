@@ -11,10 +11,12 @@ def execute_command(command, minion_details):
     for minion, master_info in minion_details.items():
 
         for master, master_details in master_info.items():
+
         
             if master_info[master] != 'not found':
                 url = master_details['url']
                 auth_token = master_details['auth_token']
+                cert_path = f'/etc/pki/tls/certs/{master}.crt'
             
 
                 headers = {
@@ -42,7 +44,7 @@ def execute_command(command, minion_details):
 
                 
 
-                response = requests.post(url, headers=headers, json=data, verify=False)
+                response = requests.post(url, headers=headers, json=data, verify= cert_path)
                 
                 if response.status_code == 200:
                     result_data = response.json()
@@ -58,6 +60,6 @@ def execute_command(command, minion_details):
 
 
 if __name__ == '__main__':
-    minion_details = map_masters_for_minionlist(['192.168.64.32','myminion1'])
+    minion_details = map_masters_for_minionlist(['192.168.64.34','myminion1'])
     command = 'test.ping'
     print(execute_command (command, minion_details))

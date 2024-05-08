@@ -1,4 +1,5 @@
 import requests
+import os
 from config import MASTER_URLS
 
 def fetch_auth_tokens():
@@ -18,8 +19,13 @@ def fetch_auth_tokens():
     for master, base_url in MASTER_URLS.items():
         login_url = f"{base_url}/login"
 
+        cert_path = f'/etc/pki/tls/certs/{master}.crt'
+        if not os.path.exists(cert_path):
+            auth_tokens[master] = 'Certificate not found'
+            continue
+
         try:
-            response = requests.post(login_url, headers=headers, data=data, verify=False)
+            response = requests.post(login_url, headers=headers, data=data, verify= f'/etc/pki/tls/certs/{master}.crt')
             response.raise_for_status()  # Raises an HTTPError for bad responses
             auth_token = response.json().get('return', [{}])[0].get('token', 'No token retrieved')
             
