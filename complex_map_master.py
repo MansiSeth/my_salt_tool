@@ -2,7 +2,7 @@ import requests
 from config import MASTER_URLS
 from auth_tokens import fetch_auth_tokens
 
-# Supports grains, regex, IP address (ipcidr)
+# Supports glob,grains, regex, IP address (ipcidr), compound
 # sends test.ping to all masters with their respective auth tokens if token is found using auth_tokens module
 # Whichever master returned true in their response is mapped to the minion key in the dictionary 
 # returns a dictionary of the form {minion: master : {url: __, auth_token:__}}
@@ -35,12 +35,20 @@ def complex_target_map_master(complex_target, target_type):
 
 
             response = requests.post(url, headers=headers, json=payload, verify=cert_path)
+           
             
             if response.status_code == 200:
                 try:
                     data = response.json()
 
-                    for minion, status in data['return'][0].items():
+                    """
+                    return payload is a dictionary with return as a key and a list as the value 
+                    the list contains a dictionary with key minion_id
+                    {'return': [{'myminion5': True, 'myminion2': True}]}
+                    Hence accessing the list with data['return'][0]
+                    """
+
+                    for minion, status in data['return'][0].items(): 
                         if status:  # If the minion responded with True
                             if minion not in result_minions:
                                 result_minions[minion] = {}
@@ -48,15 +56,15 @@ def complex_target_map_master(complex_target, target_type):
                 except ValueError:
                     print(f"Failed to decode JSON from response of {master}")
         
-            else:
-                print(f"Failed to reach {master}, status code {response.status_code}")
+            if result_minions == {}:
+                result_minions = {minion: {'master': 'not found'}}
 
-    return result_minions  # This line is now correctly outside the for loop
+    return result_minions  
 
 
 
 if __name__ == '__main__':
-    complex_target = "os:Ubuntu"
-    target_type = 'grain'
+    complex_target = "group1"
+    target_type = 'nodegroup'
     minions = complex_target_map_master(complex_target, target_type)
     print(minions)

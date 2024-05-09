@@ -61,7 +61,7 @@ def get_target_master(minion):
         
 
 if __name__ == '__main__':
-    target_master = get_target_master('192.168.64.32')
+    target_master = get_target_master('*')
     print(target_master)
 
 

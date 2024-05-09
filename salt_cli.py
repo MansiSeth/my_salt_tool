@@ -10,6 +10,7 @@ from map_master import get_target_master
 from minionlist_map_master import map_masters_for_minionlist
 from complex_map_master import complex_target_map_master
 from run_command import execute_command
+from target_type_detection import target_type_detection
 
 def main():
 
@@ -20,27 +21,20 @@ def main():
     )
 
     #Defining options
-    parser.add_argument("--typ", 
-                        help="Specify the type of targetting used",
-                        type= str,
-                        required= True,
-                        default = 'minion_id', 
-                        dest ='target_type', #name of variable you want to call using args.__ 
-                        choices = ['minion_id','minion_list', 'minionip_list', 'grain', 'regex', 'ip']
-    )
+    
 
-    parser.add_argument("--tgt", 
+    parser.add_argument("target", 
                         help="Specify the target of command",
                         type= str,
-                        required= True, 
-                        dest = 'target', #name of variable you want to call using args.__
+                        #required= True, 
+                        #dest = 'target', #name of variable you want to call using args.__
     )
 
-    parser.add_argument("--c", 
+    parser.add_argument("command", 
                         help="Define the command to execute",
                         type= str,
-                        default = 'test.ping', 
-                        dest = 'command', #name of variable you want to call using args.__ 
+                        #default = 'test.ping', 
+                        #dest = 'command', #name of variable you want to call using args.__ 
     )
 
     #set default function to be executed 
@@ -56,27 +50,41 @@ def main():
 
 def run(args) :
 
-    if args.target_type == 'minion_id':
+    target_type = target_type_detection(args.target)
+    print('Your Target Type is: ', target_type)
+
+    if target_type == 'glob':
         target_dict = get_target_master(args.target)
         data = execute_command(args.command, target_dict) 
 
-    elif args.target_type == 'minion_list':
-        minion_list = args.target.split(', ')
+    elif target_type == 'list':
+        minion_list = args.target.split(', ') #target is a string, needs to be split into comma separated list
         target_dict = map_masters_for_minionlist(minion_list)
         data = execute_command(args.command, target_dict)
 
 
-    elif args.target_type == 'grain':
+    elif target_type == 'grain':
         target_dict = complex_target_map_master(args.target, 'grain')
         data = execute_command(args.command, target_dict)
 
-    elif args.target_type == 'regex':
-        target_dict = complex_target_map_master(args.target, 'glob')
+    elif target_type == 'regex':
+        target_dict = complex_target_map_master(args.target, 'pcre')
         data = execute_command(args.command, target_dict)
         
     
-    elif args.target_type == 'ip':
+    elif target_type == 'ipcidr':
         target_dict = complex_target_map_master(args.target, 'ipcidr')
+        #target_dict2 = get_target_master(args.target)
+        #print(target_dict)
+        #print(target_dict2)
+        data = execute_command(args.command, target_dict)
+
+    elif target_type == 'nodegroup':
+        target_dict = complex_target_map_master(args.target, 'nodegroup')
+        data = execute_command(args.command, target_dict)
+
+    elif target_type == 'compound':
+        target_dict = complex_target_map_master(args.target, 'compound')
         data = execute_command(args.command, target_dict)
 
 
