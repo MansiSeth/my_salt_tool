@@ -2,12 +2,12 @@ import requests
 from config import MASTER_URLS
 from auth_tokens import fetch_auth_tokens
 
-# Supports glob,grains, regex, IP address (ipcidr), compound
+# Supports grains, regex, IP address (ipcidr)
 # sends test.ping to all masters with their respective auth tokens if token is found using auth_tokens module
 # Whichever master returned true in their response is mapped to the minion key in the dictionary 
 # returns a dictionary of the form {minion: master : {url: __, auth_token:__}}
 
-def complex_target_map_master(complex_target, target_type):
+def map_master(target, target_type):
     master_urls = MASTER_URLS
     auth_tokens = fetch_auth_tokens()
 
@@ -28,7 +28,7 @@ def complex_target_map_master(complex_target, target_type):
             
             payload = {
                 'client': 'local',
-                'tgt': complex_target,
+                'tgt': target,
                 'tgt_type': target_type,
                 'fun': 'test.ping'
             }
@@ -56,15 +56,20 @@ def complex_target_map_master(complex_target, target_type):
                 except ValueError:
                     print(f"Failed to decode JSON from response of {master}")
         
-            if result_minions == {}:
-                result_minions = {minion: {'master': 'not found'}}
+            else:
+                print(f"Failed to reach {master}, status code {response.status_code}")
+
+    if result_minions == {}:
+        result_minions[target] = {'master': 'not found'}
+
 
     return result_minions  
 
 
 
 if __name__ == '__main__':
-    complex_target = "group1"
-    target_type = 'nodegroup'
-    minions = complex_target_map_master(complex_target, target_type)
+
+    target = "myminion[10,15]"
+    target_type = 'pcre'
+    minions = complex_target_map_master(target, target_type)
     print(minions)

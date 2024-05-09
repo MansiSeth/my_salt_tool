@@ -6,9 +6,8 @@ from tabulate import tabulate
 # A module to display data as a table on the CLI
 
 
-from map_master import get_target_master
 from minionlist_map_master import map_masters_for_minionlist
-from complex_map_master import complex_target_map_master
+from find_master import map_master
 from run_command import execute_command
 from target_type_detection import target_type_detection
 
@@ -54,7 +53,7 @@ def run(args) :
     print('Your Target Type is: ', target_type)
 
     if target_type == 'glob':
-        target_dict = get_target_master(args.target)
+        target_dict = map_master(args.target, 'glob')
         data = execute_command(args.command, target_dict) 
 
     elif target_type == 'list':
@@ -64,27 +63,27 @@ def run(args) :
 
 
     elif target_type == 'grain':
-        target_dict = complex_target_map_master(args.target, 'grain')
+        target_dict = map_master(args.target, 'grain')
         data = execute_command(args.command, target_dict)
 
     elif target_type == 'regex':
-        target_dict = complex_target_map_master(args.target, 'pcre')
+        target_dict = map_master(args.target, 'pcre')
         data = execute_command(args.command, target_dict)
         
     
     elif target_type == 'ipcidr':
-        target_dict = complex_target_map_master(args.target, 'ipcidr')
+        target_dict = map_master(args.target, 'ipcidr')
         #target_dict2 = get_target_master(args.target)
         #print(target_dict)
         #print(target_dict2)
         data = execute_command(args.command, target_dict)
 
     elif target_type == 'nodegroup':
-        target_dict = complex_target_map_master(args.target, 'nodegroup')
+        target_dict = map_master(args.target, 'nodegroup')
         data = execute_command(args.command, target_dict)
 
     elif target_type == 'compound':
-        target_dict = complex_target_map_master(args.target, 'compound')
+        target_dict = map_master(args.target, 'compound')
         data = execute_command(args.command, target_dict)
 
 
