@@ -71,5 +71,5 @@ if __name__ == '__main__':
 
     target = "myminion[10,15]"
     target_type = 'pcre'
-    minions = complex_target_map_master(target, target_type)
+    minions = map_master(target, target_type)
     print(minions)
