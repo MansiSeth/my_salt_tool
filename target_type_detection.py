@@ -32,6 +32,9 @@ def target_type_detection(target):
             elif any(char in target for char in ['*', '+', '?', '.', '^', '$', '[', ']', '{', '}', '(', ')', '|']):
                 return 'regex'
 
+            elif target.startswith('master:'):
+                return 'master'
+
             else: 
                 return 'glob'
     

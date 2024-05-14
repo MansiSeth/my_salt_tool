@@ -10,6 +10,7 @@ from minionlist_map_master import map_masters_for_minionlist
 from find_master import map_master
 from run_command import execute_command
 from target_type_detection import target_type_detection
+from bymaster import execute_command_by_master
 
 def main():
 
@@ -85,6 +86,10 @@ def run(args) :
     elif target_type == 'compound':
         target_dict = map_master(args.target, 'compound')
         data = execute_command(args.command, target_dict)
+
+    elif target_type == 'master':
+        
+        data = execute_command_by_master(args.command, target_dict)
 
 
 

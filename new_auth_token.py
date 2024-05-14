@@ -7,6 +7,9 @@ from config import MASTER_URLS
 auth_cache = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 def fetch_auth_token_for_master(master):
+
+    #not handling the case of master not in config since this function is called from find master that passes 'master' as parameter by looping the config file
+
     headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded'  
@@ -46,6 +49,6 @@ def fetch_auth_token_for_master(master):
     return auth_token
 
 if __name__ == '__main__':
-    tokens = fetch_auth_token_for_master('mymaster2')
+    tokens = fetch_auth_token_for_master('mymaster1')
     print(tokens)
 
