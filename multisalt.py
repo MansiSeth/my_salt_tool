@@ -6,11 +6,11 @@ from tabulate import tabulate
 # A module to display data as a table on the CLI
 
 
-from minionlist_map_master import map_masters_for_minionlist
-from find_master import map_master
-from run_command import execute_command
+from minionlist_find_master import minionlist_find_master
+from find_master import find_master
+from run_command import run_command
 from target_type_detection import target_type_detection
-from bymaster import execute_command_by_master
+from bymaster import bymaster
 
 def main():
 
@@ -42,7 +42,7 @@ def main():
                     action="store_true")
 
     parser.add_argument("-M", "--master",
-                    help="Specify that the target is a node group",
+                    help="Include Option if ",
                     action="store_true")
 
 
@@ -62,14 +62,14 @@ def run(args) :
     
 
 
-    if args.nodegroup:
-        print('running nodegroup')
-        target_dict = map_master(args.target, 'nodegroup')
-        data = execute_command(args.command, target_dict)
+    if args.nodegroup: #if -N flag is used
+        print('Your target type is: nodegroup')
+        target_dict = find_master(args.target, 'nodegroup')
+        data = run_command(args.command, target_dict)
 
-    elif args.master:
-        print('running master')
-        data = execute_command_by_master(args.command, args.target)
+    elif args.master:# if -M flag is used
+        print('Your target type is: master')
+        data = bymaster(args.command, args.target)
 
     else: 
 
@@ -78,32 +78,32 @@ def run(args) :
         
         
         if target_type == 'glob':
-            target_dict = map_master(args.target, 'glob')
-            data = execute_command(args.command, target_dict) 
+            target_dict = find_master(args.target, 'glob')
+            data = run_command(args.command, target_dict) 
 
         elif target_type == 'list':
             minion_list = args.target.split(', ') #target is a string, needs to be split into comma separated list
-            target_dict = map_masters_for_minionlist(minion_list)
-            data = execute_command(args.command, target_dict)
+            target_dict = minionlist_find_master(minion_list)
+            data = run_command(args.command, target_dict)
 
 
         elif target_type == 'grain':
-            target_dict = map_master(args.target, 'grain')
-            data = execute_command(args.command, target_dict)
+            target_dict = find_master(args.target, 'grain')
+            data = run_command(args.command, target_dict)
 
         elif target_type == 'regex':
-            target_dict = map_master(args.target, 'pcre')
-            data = execute_command(args.command, target_dict)
+            target_dict = find_master(args.target, 'pcre')
+            data = run_command(args.command, target_dict)
             
         
         elif target_type == 'ipcidr':
-            target_dict = map_master(args.target, 'ipcidr')
-            data = execute_command(args.command, target_dict)
+            target_dict = find_master(args.target, 'ipcidr')
+            data = run_command(args.command, target_dict)
 
 
         elif target_type == 'compound':
-            target_dict = map_master(args.target, 'compound')
-            data = execute_command(args.command, target_dict)
+            target_dict = find_master(args.target, 'compound')
+            data = run_command(args.command, target_dict)
 
     
 

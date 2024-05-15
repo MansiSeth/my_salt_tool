@@ -2,7 +2,7 @@ import requests
 import redis
 from config import MASTER_URLS
 
-from new_auth_token import fetch_auth_token_for_master
+from get_auth_token import get_auth_token
 
 # Supports grains, regex, IP address (ipcidr)
 # sends test.ping to all masters with their respective auth tokens if token is found using auth_tokens module
@@ -12,7 +12,7 @@ from new_auth_token import fetch_auth_token_for_master
 
 target_cache = redis.Redis(host='localhost', port=6379, db=1, decode_responses=True)
 
-def map_master(target, target_type):
+def find_master(target, target_type):
     master_urls = MASTER_URLS
 
     result_minions = {}
@@ -33,7 +33,7 @@ def map_master(target, target_type):
 
             if master in master_urls:
                 url = master_urls[master]  # Retrieve URL for the master
-                auth_token = fetch_auth_token_for_master(master)  # Fetch the auth token for the master
+                auth_token = get_auth_token(master)  # Fetch the auth token for the master
 
                 # Check if the auth token retrieval was successful
                 if auth_token not in ('Failed to get auth token', 'Certificate not found'):
@@ -55,7 +55,7 @@ def map_master(target, target_type):
     if not cache_info:
         for master, url in master_urls.items():
 
-            auth_token = fetch_auth_token_for_master(master)
+            auth_token = get_auth_token(master)
 
             cert_path = f'/etc/pki/tls/certs/{master}.crt'
 
@@ -123,5 +123,5 @@ if __name__ == '__main__':
 
     target = "mycolor:red"
     target_type = 'grain'
-    minions = map_master(target, target_type)
+    minions = find_master(target, target_type)
     print(minions)

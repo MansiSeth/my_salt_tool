@@ -3,10 +3,11 @@ import requests
 import redis
 from config import MASTER_URLS
 
+
 # Setting up the Redis connection
 auth_cache = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
-def fetch_auth_token_for_master(master):
+def get_auth_token(master):
 
     #not handling the case of master not in config since this function is called from find master that passes 'master' as parameter by looping the config file
 
@@ -49,6 +50,6 @@ def fetch_auth_token_for_master(master):
     return auth_token
 
 if __name__ == '__main__':
-    tokens = fetch_auth_token_for_master('mymaster1')
+    tokens = get_auth_token('mymaster')
     print(tokens)
 

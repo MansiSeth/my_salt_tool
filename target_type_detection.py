@@ -11,7 +11,6 @@ def target_type_detection(target):
     if re.fullmatch(r'\s*([A-Za-z0-9_.]+)\s*,\s*([A-Za-z0-9_.]+)\s*(,\s*[A-Za-z0-9_.]+\s*)*', target): 
         return 'list'
         
-
     else: 
 
         #compound may have grain or regex parts so need to make sure its not compound first
@@ -24,14 +23,8 @@ def target_type_detection(target):
                 return 'ipcidr'
 
 
-            #elif target.startswith('group:'):
-            #    return 'nodegroup'
-
             elif any(char in target for char in ['*', '+', '?', '.', '^', '$', '[', ']', '{', '}', '(', ')', '|']):
                 return 'regex'
-
-            elif target.startswith('master:'):
-                return 'master'
 
             elif ':' in target:
                 return 'grain'

@@ -1,9 +1,9 @@
 import requests
-from new_auth_token import fetch_auth_token_for_master
+from get_auth_token import get_auth_token
 from config import MASTER_URLS
 
 
-def execute_command_by_master(command, master):
+def bymaster(command, master):
     results = {}
     
 
@@ -11,7 +11,7 @@ def execute_command_by_master(command, master):
     if master in MASTER_URLS:
         url = MASTER_URLS[master]  # Retrieve URL for the master
         
-        auth_token = fetch_auth_token_for_master(master)
+        auth_token = get_auth_token(master)
         
         cert_path = f'/etc/pki/tls/certs/{master}.crt'
 
@@ -65,4 +65,4 @@ def execute_command_by_master(command, master):
 if __name__ == '__main__':
     master = 'mymaster1'
     command = 'test.ping'
-    print(execute_command_by_master(command, master))
+    print(bymaster(command, master))

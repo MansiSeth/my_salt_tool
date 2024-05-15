@@ -1,11 +1,11 @@
 import requests
 
-from minionlist_map_master import map_masters_for_minionlist
-#Testing use to get fresh auth tokens
+from minionlist_find_master import minionlist_find_master
+#Testing use
 #not used unless calling script from terminal, miniondetails gets passed as a param from cli app where this is called already 
  
 
-def execute_command(command, minion_details):
+def run_command(command, minion_details):
     results = {}
 
     for minion, master_info in minion_details.items():
@@ -60,6 +60,6 @@ def execute_command(command, minion_details):
 
 
 if __name__ == '__main__':
-    minion_details = map_masters_for_minionlist(['192.168.64.34','myminion1'])
+    minion_details = minionlist_find_master(['192.168.64.34','myminion1'])
     command = 'test.ping'
-    print(execute_command (command, minion_details))
+    print(run_command(command, minion_details))
