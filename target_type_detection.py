@@ -23,17 +23,18 @@ def target_type_detection(target):
             if re.fullmatch(r"(\d{1,3}\.){3}\d{1,3}", target): #regex can have '.' too so just that wont work
                 return 'ipcidr'
 
-            elif ':' in target:
-                return 'grain'
 
-            elif target.startswith('group'):
-                return 'nodegroup'
+            #elif target.startswith('group:'):
+            #    return 'nodegroup'
 
             elif any(char in target for char in ['*', '+', '?', '.', '^', '$', '[', ']', '{', '}', '(', ')', '|']):
                 return 'regex'
 
             elif target.startswith('master:'):
                 return 'master'
+
+            elif ':' in target:
+                return 'grain'
 
             else: 
                 return 'glob'

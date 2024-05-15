@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 import argparse 
 # A module that lets us write CLI apps
@@ -37,6 +37,15 @@ def main():
                         #dest = 'command', #name of variable you want to call using args.__ 
     )
 
+    parser.add_argument("-N", "--nodegroup",
+                    help="Specify that the target is a node group",
+                    action="store_true")
+
+    parser.add_argument("-M", "--master",
+                    help="Specify that the target is a node group",
+                    action="store_true")
+
+
     #set default function to be executed 
     parser.set_defaults(func=run)
 
@@ -50,46 +59,53 @@ def main():
 
 def run(args) :
 
-    target_type = target_type_detection(args.target)
-    print('Your Target Type is: ', target_type)
-
-    if target_type == 'glob':
-        target_dict = map_master(args.target, 'glob')
-        data = execute_command(args.command, target_dict) 
-
-    elif target_type == 'list':
-        minion_list = args.target.split(', ') #target is a string, needs to be split into comma separated list
-        target_dict = map_masters_for_minionlist(minion_list)
-        data = execute_command(args.command, target_dict)
-
-
-    elif target_type == 'grain':
-        target_dict = map_master(args.target, 'grain')
-        data = execute_command(args.command, target_dict)
-
-    elif target_type == 'regex':
-        target_dict = map_master(args.target, 'pcre')
-        data = execute_command(args.command, target_dict)
-        
     
-    elif target_type == 'ipcidr':
-        target_dict = map_master(args.target, 'ipcidr')
-        #target_dict2 = get_target_master(args.target)
-        #print(target_dict)
-        #print(target_dict2)
-        data = execute_command(args.command, target_dict)
 
-    elif target_type == 'nodegroup':
+
+    if args.nodegroup:
+        print('running nodegroup')
         target_dict = map_master(args.target, 'nodegroup')
         data = execute_command(args.command, target_dict)
 
-    elif target_type == 'compound':
-        target_dict = map_master(args.target, 'compound')
-        data = execute_command(args.command, target_dict)
+    elif args.master:
+        print('running master')
+        data = execute_command_by_master(args.command, args.target)
 
-    elif target_type == 'master':
+    else: 
+
+        target_type = target_type_detection(args.target)
+        print('Your Target Type is: ', target_type)
         
-        data = execute_command_by_master(args.command, target_dict)
+        
+        if target_type == 'glob':
+            target_dict = map_master(args.target, 'glob')
+            data = execute_command(args.command, target_dict) 
+
+        elif target_type == 'list':
+            minion_list = args.target.split(', ') #target is a string, needs to be split into comma separated list
+            target_dict = map_masters_for_minionlist(minion_list)
+            data = execute_command(args.command, target_dict)
+
+
+        elif target_type == 'grain':
+            target_dict = map_master(args.target, 'grain')
+            data = execute_command(args.command, target_dict)
+
+        elif target_type == 'regex':
+            target_dict = map_master(args.target, 'pcre')
+            data = execute_command(args.command, target_dict)
+            
+        
+        elif target_type == 'ipcidr':
+            target_dict = map_master(args.target, 'ipcidr')
+            data = execute_command(args.command, target_dict)
+
+
+        elif target_type == 'compound':
+            target_dict = map_master(args.target, 'compound')
+            data = execute_command(args.command, target_dict)
+
+    
 
 
 
